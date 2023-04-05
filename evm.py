@@ -12,24 +12,37 @@
 
 import json
 import os
+from lib.objects import Context
+from lib.opcodes import get_opcode
 
 def evm(code):
     pc = 0
     success = True
     stack = []
+    ctx = Context(code)
 
-    while pc < len(code):
+    while ctx.pc < len(code):
         op = code[pc]
-        pc += 1
+
+        opcode = get_opcode(op)
+        # import pdb
+        # pdb.set_trace()
+        
+        opcode.execute(ctx);
+
+
+        ctx.pc+=1
+
+        
 
         # TODO: implement the EVM here!
         
 
-    return (success, stack)
+    return (success, ctx.stack.list)
 
 def test():
     script_dirname = os.path.dirname(os.path.abspath(__file__))
-    json_file = os.path.join(script_dirname, "..", "evm.json")
+    json_file = os.path.join(script_dirname, "evm.json")
     with open(json_file) as f:
         data = json.load(f)
         total = len(data)
